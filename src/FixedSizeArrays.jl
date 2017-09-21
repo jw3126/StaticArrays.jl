@@ -1,11 +1,3 @@
-"""
-Compatibility layer for transferring from FixedSizeArrays. This provides
-alternative definitions of `Vec`, `Mat`, `Point`, `FixedVectorNoTuple`, `@fsa`,
-etc, using StaticArrays as a backend.
-
-The type definitions are not "perfect" matches because the type parameters are
-different. However, it should cover common method signatures and constructors.
-"""
 module FixedSizeArrays
 
 using ..StaticArrays
