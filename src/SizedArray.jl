@@ -1,14 +1,3 @@
-
-"""
-    SizedArray{Tuple{dims...}}(array)
-
-Wraps an `Array` with a static size, so to take advantage of the (faster)
-methods defined by the static array package. The size is checked once upon
-construction to determine if the number of elements (`length`) match, but the
-array may be reshaped.
-
-(Also, `Size(dims...)(array)` acheives the same thing)
-"""
 struct SizedArray{S <: Tuple, T, N, M} <: StaticArray{S, T, N}
     data::Array{T, M}
 
@@ -73,13 +62,6 @@ SizedMatrix{S1,S2,T,M} = SizedArray{Tuple{S1,S2},T,2,M}
 @inline (::Type{SizedMatrix{S1,S2}})(x::NTuple{L,T}) where {S1,S2,T,L} = SizedArray{Tuple{S1,S2},T,2,2}(x)
 
 
-"""
-    Size(dims)(array)
-
-Creates a `SizedArray` wrapping `array` with the specified statically-known
-`dims`, so to take advantage of the (faster) methods defined by the static array
-package.
-"""
 (::Size{S})(a::Array) where {S} = SizedArray{Tuple{S...}}(a)
 
 
