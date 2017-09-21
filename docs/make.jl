@@ -2,7 +2,7 @@ using Documenter, StaticArrays
 
 makedocs(
          format = :html,
-         modules = [StaticArrays],
+         modules = [StaticArrays, StaticArrays.FixedSizeArrays],
          sitename = "StaticArrays.jl",
          pages = [
             "Home" => "index.md",
