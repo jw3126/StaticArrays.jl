@@ -1,25 +1,3 @@
-"""
-    Size(dims::Int...)
-
-`Size` is used extensively in throughout the `StaticArrays` API to describe the size of a
-static array desired by the user. The dimensions are stored as a type parameter and are
-statically propagated by the compiler, resulting in efficient, type inferrable code. For
-example, to create a static matrix of zeros, use `zeros(Size(3,3))` (rather than
-`zeros(3,3)`, which constructs a `Base.Array`).
-
-    Size(a::StaticArray)
-    Size(::Type{T<:StaticArray})
-
-Extract the `Size` corresponding to the given static array. This has multiple uses,
-including using for "trait"-based dispatch on the size of a statically sized array. For
-example:
-```
-det(x::StaticMatrix) = _det(Size(x), x)
-_det(::Size{(1,1)}, x::StaticMatrix) = x[1,1]
-_det(::Size{(2,2)}, x::StaticMatrix) = x[1,1]*x[2,2] - x[1,2]*x[2,1]
-# and other definitions as necessary
-```
-"""
 struct Size{S}
     function Size{S}() where {S}
         new{S::Tuple{Vararg{Int}}}()
@@ -34,18 +12,6 @@ Base.show(io::IO, ::Size{S}) where {S} = print(io, "Size", S)
 
 #= There seems to be a subtyping/specialization bug...
 function Size(::Type{SA}) where {SA <: StaticArray} # A nice, default error message for when S not defined
-    error("""
-        The size of type `$SA` is not known.
-
-        If you were trying to construct (or `convert` to) a `StaticArray` you
-        may need to add the size explicitly as a type parameter so its size is
-        inferrable to the Julia compiler (or performance would be terrible). For
-        example, you might try
-
-            m = zeros(3,3)
-            SMatrix(m)      # this error
-            SMatrix{3,3}(m) # correct - size is inferrable
-        """)
 end =#
 Size(a::StaticArray{S}) where {S} = Size(S)
 Size(a::Type{<:StaticArray{S}}) where {S} = Size(S)
@@ -99,9 +65,6 @@ Length(::Type{SA}) where {SA <: StaticArray} = Length(Size(SA))
 @propagate_inbounds unroll_tuple(f, ::Length{L}) where {L} = unroll_tuple(f, Val{L})
 
 
-"""
-Return either the statically known Size() or runtime size()
-"""
 @inline _size(a) = size(a)
 @inline _size(a::StaticArray) = Size(a)
 
@@ -110,9 +73,6 @@ Return either the statically known Size() or runtime size()
 @inline _first_static(a1, as...) = _first_static(as...)
 @inline _first_static() = throw(ArgumentError("No StaticArray found in argument list"))
 
-"""
-Returns the common Size of the inputs (or else throws a DimensionMismatch)
-"""
 @inline function same_size(as...)
     s = Size(_first_static(as...))
     _sizes_match(s, as...) || _throw_size_mismatch(as...)
