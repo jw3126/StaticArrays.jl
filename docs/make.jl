@@ -12,5 +12,8 @@ makedocs(
         )
 
 deploydocs(
-    repo = "github.com/JuliaArrays/StaticArrays.jl",
+    repo = "github.com/JuliaArrays/StaticArrays.jl.git",
+    target = "build",
+    deps   = nothing,
+    make   = nothing
 )
